@@ -1,30 +1,48 @@
 import SwiftUI
 
 struct HomeView: View {
-    var body: some View {
-        VStack {
-            TabView {
-                Text("Tab 1 Content")
-                    .tabItem {
-                        Image(systemName: "1.square.fill")
-                        Text("Tab 1")
-                    }
-                    .tag(0)
 
-                Text("Tab 2 Content")
-                    .tabItem {
-                        Image(systemName: "2.square.fill")
-                        Text("Tab 2")
+    @ObservedObject var viewModel: HomeViewModel
+
+    var body: some View {
+        ZStack {
+            Color.white.ignoresSafeArea()
+
+            switch viewModel.state {
+            case .loading:
+                ForEach(viewModel.redactedData, id: \.id) { article in
+                    NewsCard(article: article)
+                        .redacted(reason: .placeholder)
+                }
+            case .finished:
+                VStack {
+                    TabView(selection: $viewModel.selectedTab) {
+                        NewsFeedView(viewModel: viewModel)
+                            .padding(.top, .standard)
+                            .tabItem {
+                                Image(systemName: "newspaper")
+                                Text("Top headlines")
+                            }
+                            .tag(0)
+
+                        NewsFeedView(viewModel: viewModel)
+                            .padding(.top, .standard)
+                            .tabItem {
+                                Image(systemName: "newspaper.circle")
+                                Text("Everything")
+                            }
+                            .tag(1)
                     }
-                    .tag(1)
+                }
+                .padding()
             }
         }
-        .padding()
+        .navigationTitle(viewModel.tabTitle)
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        HomeView(viewModel: HomeViewModel())
     }
 }

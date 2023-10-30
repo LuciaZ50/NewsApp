@@ -1,0 +1,71 @@
+import Dependencies
+import Foundation
+
+protocol NewsServiceProtocol {
+    func fetchTopHeadlines() async throws -> [ArticleDataModel]?
+    func fetchEverything() async throws -> [ArticleDataModel]?
+}
+
+class NewsService: NewsServiceProtocol {
+
+    @Dependency(\.networkClient) private var networkClient: NetworkClient
+    private let jsonDecoder = JSONDecoder()
+
+
+    func fetchTopHeadlines() async throws -> [ArticleDataModel]? {
+
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else { return nil }
+
+        let request = HTTPSRequest(method: .get,
+                                  path: "/top-headlines",
+                                  queryParameters: [URLQueryItem(name: "country", value: "us"),
+                                                    URLQueryItem(name: "apiKey", value: apiKey)],
+                                  headers: ["Accept": "application/json"])
+
+        let data = try await networkClient.execute(request)
+        let articles = try jsonDecoder.decode(NewsResponse.self, from: data).articles
+        return articles
+
+    }
+
+    func fetchEverything() async throws -> [ArticleDataModel]? {
+
+        guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else { return nil }
+
+        let request = HTTPSRequest(method: .get,
+                                  path: "/everything",
+                                   queryParameters: [URLQueryItem(name: "q", value: "a"),
+                                    URLQueryItem(name: "apiKey", value: apiKey)],
+                                  headers: ["Accept": "application/json"])
+
+        let data = try await networkClient.execute(request)
+        let articles = try jsonDecoder.decode(NewsResponse.self, from: data).articles
+        return articles
+
+    }
+
+}
+
+struct NewsResponse: Codable {
+    let status: String
+    let totalResults: Int
+    let articles: [ArticleDataModel]
+}
+
+// MARK: - Dependency Injection
+struct NewsServiceKey: DependencyKey {
+
+    static var liveValue: any NewsServiceProtocol {
+        NewsService()
+    }
+
+}
+
+extension DependencyValues {
+
+    var newsService: any NewsServiceProtocol {
+        get { self[NewsServiceKey.self] }
+        set { self[NewsServiceKey.self] = newValue }
+    }
+
+}

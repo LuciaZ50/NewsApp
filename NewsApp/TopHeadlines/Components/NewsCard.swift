@@ -1,34 +1,43 @@
 import SwiftUI
 
 struct NewsCard: View {
-
     let article: Article
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(article.title ?? "title")
-//            AsyncImage(url: <#T##URL?#>) { <#Image#> in
-//                <#code#>
-//            } placeholder: {
-//                <#code#>
-//            }
-
+        HStack {
+            if let url = article.urlToImage {
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .squareFrame(.cell)
+                } placeholder: {
+                    Image("image.placeholder")
+                        .resizable()
+                        .scaledToFill()
+                        .squareFrame(.cell)
+                }
+            }
+            VStack(alignment: .leading) {
+                Text(article.title ?? "title")
+                    .bold()
+                    .lineLimit(nil)
+                Spacer()
+                HStack {
+                    Text("Author:")
+                    Spacer()
+                    Text(article.author ?? "Author Unknown")
+                        .font(.italic(.caption)())
+                        .lineLimit(1)
+                }
+            }
+            .foregroundColor(.black)
+            Spacer()
         }
-    }
-}
-
-struct NewsCard_Previews: PreviewProvider {
-    static var previews: some View {
-        let article = Article(from: ArticleDataModel(
-            source: Source(from: SourceDataModel(id: "id", name: "name")),
-            author: "Lucia Zuzic",
-            title: "Some title",
-            description: "some description",
-            url: "",
-            urlToImage: "",
-            publishedAt: "26-10-2023",
-            content: "content"))
-
-        return NewsCard(article: article)
+        .frame(maxWidth: .infinity)
+        .frame(height: HeightsConstants.cell.height)
+        .padding()
+        .background(Color.lighterGray())
+        .cornerRadius(.cell)
     }
 }

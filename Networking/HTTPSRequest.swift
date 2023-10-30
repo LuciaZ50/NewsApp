@@ -1,6 +1,6 @@
 import Foundation
 
-public struct HTTPRequest {
+public struct HTTPSRequest {
 
     public var method: HTTPMethod
     public var baseURL: URL
@@ -28,7 +28,7 @@ public struct HTTPRequest {
         if let infoDict = Bundle.main.infoDictionary, let baseURL = infoDict["base_url"] as? String {
             self.baseURL = URL(string: baseURL)!
         } else {
-            self.baseURL = URL(string: "fallback_base_url")! // You can provide a fallback URL here
+            self.baseURL = URL(string: "https://newsapi.org/v2")!
         }
         self.path = path
         self.queryParameters = queryParameters
@@ -41,7 +41,7 @@ public struct HTTPRequest {
 // MARK: - HTTPRequest to URLRequest
 extension URLRequest {
 
-    init?(from request: HTTPRequest) {
+    init?(from request: HTTPSRequest) {
         self.init(url: request.url)
         httpMethod = request.method.rawValue
         httpBody = request.body
