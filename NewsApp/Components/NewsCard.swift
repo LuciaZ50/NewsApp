@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NewsCard: View {
     let article: Article
+    @State var showDate: Bool = false
 
     var body: some View {
         HStack {
@@ -29,6 +30,10 @@ struct NewsCard: View {
                     Text(article.author ?? "Author Unknown")
                         .font(.italic(.caption)())
                         .lineLimit(1)
+                }
+                if showDate {
+                    Text(article.publishedAt?.formatDateAsDDMMYYYY() ?? "")
+                        .font(.caption)
                 }
             }
             .foregroundColor(.black)

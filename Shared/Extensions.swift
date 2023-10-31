@@ -39,3 +39,18 @@ extension View {
 extension CGFloat {
     static let cell: CGFloat = 12.0
 }
+
+extension String {
+    func formatDateAsDDMMYYYY() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+
+        if let date = dateFormatter.date(from: self) {
+            dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
+            return dateFormatter.string(from: date)
+        } else {
+            return "Invalid Date"
+        }
+    }
+}
+

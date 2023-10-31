@@ -10,11 +10,7 @@ struct HomeView: View {
 
             switch viewModel.state {
             case .loading:
-                ForEach(viewModel.redactedData, id: \.id) { article in
-                    NewsCard(article: article)
-                        .redacted(reason: .placeholder)
-                        .padding(.all, .standard)
-                }
+                ProgressView()
             case .finished:
                 VStack {
                     TabView(selection: $viewModel.selectedTab) {

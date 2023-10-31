@@ -5,9 +5,15 @@ class HomeViewModel: ObservableObject {
 
     @Dependency(\.newsService) private var newService: NewsServiceProtocol
 
+    @Published var originalTopHeadlinesArticles: [Article] = []
+    @Published var originalEverythingArticles: [Article] = []
+    @Published var searchText = "dog" {
+        didSet {
+            updateFilteredArticles()
+        }
+    }
     @Published var topHeadlinesArticles: [Article] = []
     @Published var everythingArticles: [Article] = []
-    @Published var searchText = ""
 
     @Published var selectedTab = 0 {
         didSet {
@@ -15,9 +21,11 @@ class HomeViewModel: ObservableObject {
         }
     }
     @Published var state: State = .loading
+    @Published var sortingBy: Sorting = .ascending
 
     @Published var currentpage = 1
     @Published var isLoadingMore = false
+    @Published var isRefreshing = false
 
     var tabTitle: String {
         switch selectedTab {
@@ -33,6 +41,11 @@ class HomeViewModel: ObservableObject {
         case finished
     }
 
+    enum Sorting {
+        case ascending
+        case descending
+    }
+
     init() {
         Task {
             await fetchTopHeadlines()
@@ -40,12 +53,63 @@ class HomeViewModel: ObservableObject {
         }
     }
 
-    private func fetchTopHeadlines() async {
-        self.state = .loading
+    func refreshData() async {
+
+        await fetchEverything()
+        await fetchTopHeadlines()
+
+        await MainActor.run {
+            isRefreshing = false
+        }
+
+    }
+
+    func sortArticles() async {
         do {
-            let topHeadlinesData = try await newService.fetchTopHeadlines(at: currentpage)
+            let everythingData = try await newService.fetchAllEverythings()
             await MainActor.run {
-                self.topHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
+                self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
+                self.everythingArticles = originalEverythingArticles.reversed()
+            }
+        } catch {
+            print("Error sorting articles: \(error.localizedDescription)")
+        }
+    }
+
+    private func updateFilteredArticles() {
+        switch selectedTab {
+        case 1:
+            if searchText.isEmpty {
+                everythingArticles = originalEverythingArticles
+            } else {
+                everythingArticles = originalEverythingArticles.filter { searchArticles($0) }
+            }
+        default:
+            if searchText.isEmpty {
+                topHeadlinesArticles = originalTopHeadlinesArticles
+            } else {
+                topHeadlinesArticles = originalTopHeadlinesArticles.filter { searchArticles($0) }
+            }
+        }
+    }
+
+    private func searchArticles(_ article: Article) -> Bool {
+        guard searchText.isEmpty || (article.title?.lowercased().contains(searchText.lowercased()) == true) else {
+
+            return false
+        }
+        return true
+    }
+
+    private func fetchTopHeadlines() async {
+        await MainActor.run {
+            self.state = .loading
+        }
+        do {
+            let topHeadlinesData = try await newService.fetchTopHeadlines(for: self.searchText, page: currentpage)
+            await MainActor.run {
+                self.originalTopHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
+                self.topHeadlinesArticles = originalTopHeadlinesArticles
                 self.state = .finished
             }
 
@@ -59,9 +123,10 @@ class HomeViewModel: ObservableObject {
 
     private func fetchEverything() async {
         do {
-            let everythingData = try await newService.fetchEverything(at: currentpage)
+            let everythingData = try await newService.fetchEverything(for: self.searchText, page: currentpage)
             await MainActor.run {
-                self.everythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
+                self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
+                self.everythingArticles = originalEverythingArticles
             }
         } catch {
             print("Error fetching everything: \(error.localizedDescription)")
@@ -82,11 +147,11 @@ class HomeViewModel: ObservableObject {
             var everythingFetchedArticles: [Article]?
             switch selectedTab {
             case 0:
-                if let articlesData = try await newService.fetchTopHeadlines(at: currentpage) {
+                if let articlesData = try await newService.fetchTopHeadlines(for: searchText, page: currentpage) {
                     topHeadlinesFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
             case 1:
-                if let articlesData = try await newService.fetchEverything(at: currentpage) {
+                if let articlesData = try await newService.fetchEverything(for: searchText, page: currentpage) {
                     everythingFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
             default:
@@ -94,11 +159,11 @@ class HomeViewModel: ObservableObject {
             }
 
             if let articles = topHeadlinesFetchedArticles {
-                self.topHeadlinesArticles.append(contentsOf: articles)
+                self.originalTopHeadlinesArticles.append(contentsOf: articles)
             }
 
             if let articles = everythingFetchedArticles {
-                self.everythingArticles.append(contentsOf: articles)
+                self.originalEverythingArticles.append(contentsOf: articles)
             }
 
             isLoadingMore = false
@@ -108,16 +173,6 @@ class HomeViewModel: ObservableObject {
                 isLoadingMore = false
             }
         }
-    }
-
-    var redactedData: [Article] {
-        let redactedArticle = Article(
-            author: "Author",
-            title: "Title",
-            urlToImage: URL(string: "https://picsum.photos/200")
-        )
-
-        return Array(repeating: redactedArticle, count: 5)
     }
 
 }

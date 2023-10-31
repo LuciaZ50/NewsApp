@@ -2,7 +2,6 @@ import SwiftUI
 
 struct SearchBar: View {
     @Binding var text: String
-    var onSearch: (String) -> Void
 
     var body: some View {
         HStack {
@@ -30,4 +29,5 @@ struct SearchBar: View {
                 .stroke(Color.lighterGray())
         )
     }
+
 }
