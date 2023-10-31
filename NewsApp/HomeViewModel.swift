@@ -7,9 +7,17 @@ class HomeViewModel: ObservableObject {
 
     @Published var topHeadlinesArticles: [Article] = []
     @Published var everythingArticles: [Article] = []
+    @Published var searchText = ""
 
-    @Published var selectedTab = 0
+    @Published var selectedTab = 0 {
+        didSet {
+            currentpage = 1
+        }
+    }
     @Published var state: State = .loading
+
+    @Published var currentpage = 1
+    @Published var isLoadingMore = false
 
     var tabTitle: String {
         switch selectedTab {
@@ -35,11 +43,10 @@ class HomeViewModel: ObservableObject {
     private func fetchTopHeadlines() async {
         self.state = .loading
         do {
-            let topHeadlinesData = try await newService.fetchTopHeadlines()
+            let topHeadlinesData = try await newService.fetchTopHeadlines(at: currentpage)
             await MainActor.run {
                 self.topHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
                 self.state = .finished
-                print("VM: \(topHeadlinesData)")
             }
 
         } catch {
@@ -52,12 +59,54 @@ class HomeViewModel: ObservableObject {
 
     private func fetchEverything() async {
         do {
-            let everythingData = try await newService.fetchEverything()
+            let everythingData = try await newService.fetchEverything(at: currentpage)
             await MainActor.run {
                 self.everythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
             }
         } catch {
             print("Error fetching everything: \(error.localizedDescription)")
+        }
+    }
+
+    @MainActor
+    func loadMoreArticles() async {
+        guard !isLoadingMore else { return }
+
+        await MainActor.run {
+            isLoadingMore = true
+            currentpage += 1
+        }
+
+        do {
+            var topHeadlinesFetchedArticles: [Article]?
+            var everythingFetchedArticles: [Article]?
+            switch selectedTab {
+            case 0:
+                if let articlesData = try await newService.fetchTopHeadlines(at: currentpage) {
+                    topHeadlinesFetchedArticles = articlesData.compactMap { Article(from: $0) }
+                }
+            case 1:
+                if let articlesData = try await newService.fetchEverything(at: currentpage) {
+                    everythingFetchedArticles = articlesData.compactMap { Article(from: $0) }
+                }
+            default:
+                break
+            }
+
+            if let articles = topHeadlinesFetchedArticles {
+                self.topHeadlinesArticles.append(contentsOf: articles)
+            }
+
+            if let articles = everythingFetchedArticles {
+                self.everythingArticles.append(contentsOf: articles)
+            }
+
+            isLoadingMore = false
+        } catch {
+            print("Error loading more articles: \(error.localizedDescription)")
+            await MainActor.run {
+                isLoadingMore = false
+            }
         }
     }
 

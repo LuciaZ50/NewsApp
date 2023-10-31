@@ -13,6 +13,7 @@ struct HomeView: View {
                 ForEach(viewModel.redactedData, id: \.id) { article in
                     NewsCard(article: article)
                         .redacted(reason: .placeholder)
+                        .padding(.all, .standard)
                 }
             case .finished:
                 VStack {
@@ -34,7 +35,6 @@ struct HomeView: View {
                             .tag(1)
                     }
                 }
-                .padding()
             }
         }
         .navigationTitle(viewModel.tabTitle)

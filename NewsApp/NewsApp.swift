@@ -4,7 +4,7 @@ import SwiftUI
 struct NewsApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            NavigationStack {
                 HomeView(viewModel: HomeViewModel())
                     .ignoresSafeArea()
             }

@@ -1,14 +1,8 @@
 import SwiftUI
 
-
-extension View {
-    func cornerRadius(_ size: CornerRadiusSize) -> some View {
-        cornerRadius(size.rawValue)
-    }
-}
-
 enum SquareFrameSize: CGFloat {
     case cell = 100
+    case search = 15
 }
 
 extension View {
@@ -42,3 +36,6 @@ extension View {
     }
 }
 
+extension CGFloat {
+    static let cell: CGFloat = 12.0
+}

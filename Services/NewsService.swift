@@ -2,25 +2,28 @@ import Dependencies
 import Foundation
 
 protocol NewsServiceProtocol {
-    func fetchTopHeadlines() async throws -> [ArticleDataModel]?
-    func fetchEverything() async throws -> [ArticleDataModel]?
+    func fetchTopHeadlines(at page: Int) async throws -> [ArticleDataModel]?
+    func fetchEverything(at page: Int) async throws -> [ArticleDataModel]?
 }
 
 class NewsService: NewsServiceProtocol {
 
     @Dependency(\.networkClient) private var networkClient: NetworkClient
     private let jsonDecoder = JSONDecoder()
+    private let pageSize = "10"
 
 
-    func fetchTopHeadlines() async throws -> [ArticleDataModel]? {
+    func fetchTopHeadlines(at page: Int) async throws -> [ArticleDataModel]? {
 
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else { return nil }
 
         let request = HTTPSRequest(method: .get,
-                                  path: "/top-headlines",
-                                  queryParameters: [URLQueryItem(name: "country", value: "us"),
-                                                    URLQueryItem(name: "apiKey", value: apiKey)],
-                                  headers: ["Accept": "application/json"])
+                                   path: "/top-headlines",
+                                   queryParameters: [URLQueryItem(name: "country", value: "us"),
+                                                     URLQueryItem(name: "apiKey", value: apiKey),
+                                                     URLQueryItem(name: "page", value: String(page)),
+                                                     URLQueryItem(name: "pageSize", value: pageSize)],
+                                   headers: ["Accept": "application/json"])
 
         let data = try await networkClient.execute(request)
         let articles = try jsonDecoder.decode(NewsResponse.self, from: data).articles
@@ -28,15 +31,17 @@ class NewsService: NewsServiceProtocol {
 
     }
 
-    func fetchEverything() async throws -> [ArticleDataModel]? {
+    func fetchEverything(at page: Int) async throws -> [ArticleDataModel]? {
 
         guard let apiKey = Bundle.main.object(forInfoDictionaryKey: "API_KEY") as? String else { return nil }
 
         let request = HTTPSRequest(method: .get,
-                                  path: "/everything",
+                                   path: "/everything",
                                    queryParameters: [URLQueryItem(name: "q", value: "a"),
-                                    URLQueryItem(name: "apiKey", value: apiKey)],
-                                  headers: ["Accept": "application/json"])
+                                                     URLQueryItem(name: "apiKey", value: apiKey),
+                                                     URLQueryItem(name: "page", value: String(page)),
+                                                     URLQueryItem(name: "pageSize", value: pageSize)],
+                                   headers: ["Accept": "application/json"])
 
         let data = try await networkClient.execute(request)
         let articles = try jsonDecoder.decode(NewsResponse.self, from: data).articles
