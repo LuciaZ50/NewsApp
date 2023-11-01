@@ -14,7 +14,7 @@ This screen shows a list of articles fetched from the given API. The data for bo
 screens which is then passed to the view.
 I implemented pagination on this screen. Each page retruns 30 items. The user can use the search bar to filter the fetched articles by using a keyword/keywords.
 
-![Alt text](!https://github.com/LuciaZ50/NewsApp/assets/93731591/703b2092-5272-4f8f-b42a-936bb497d26e)
+![WhatsApp Image 2023-11-01 at 12 17 33](https://github.com/LuciaZ50/NewsApp/assets/93731591/e2a101a4-8b30-4756-b819-34122b8420db)
 
 **Everythings**
 
