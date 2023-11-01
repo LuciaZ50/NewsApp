@@ -3,6 +3,7 @@
 This is the News App that I made as a part of the recruitment process for Aras Digital Products.
 
 **API-KEY**
+
 The assignment was to make two tabs which fetch data from an API using an API key. Normally the API key shouldn't be
 saved in the info.plist file or anywhere in the code where it is visible to others other than the person who uses. It should be passed around via .gitignore or 
 something more secure but for the purposes of this assigment i put it in the Info.plist.
