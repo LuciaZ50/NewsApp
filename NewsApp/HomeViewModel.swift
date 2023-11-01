@@ -21,7 +21,7 @@ class HomeViewModel: ObservableObject {
     @Published var topHeadlinesArticles: [Article] = []
     @Published var everythingArticles: [Article] = []
 
-    @Published var selectedTab = 0 {
+    @Published var selectedTab: HomeTab = .topHeadlines {
         didSet {
             currentpage = 1
         }
@@ -35,12 +35,10 @@ class HomeViewModel: ObservableObject {
 
     var tabTitle: String {
         switch selectedTab {
-        case 1:
+        case .everything:
             return "Everything"
-        case 0:
+        case .topHeadlines:
             return "Top Headlines"
-        default:
-            return "Loading..."
         }
     }
 
@@ -52,6 +50,11 @@ class HomeViewModel: ObservableObject {
     enum Sorting {
         case ascending
         case descending
+    }
+
+    enum HomeTab {
+        case topHeadlines
+        case everything
     }
 
     init() {
@@ -87,13 +90,13 @@ class HomeViewModel: ObservableObject {
 
     private func updateFilteredArticles() {
         switch selectedTab {
-        case 1:
+        case .topHeadlines:
             if searchTextTopHeadlines.isEmpty {
                 everythingArticles = originalEverythingArticles
             } else {
                 everythingArticles = originalEverythingArticles.filter { searchArticles($0) }
             }
-        default:
+        case .everything:
             if searchTextTopHeadlines.isEmpty {
                 topHeadlinesArticles = originalTopHeadlinesArticles
             } else {
@@ -129,7 +132,7 @@ class HomeViewModel: ObservableObject {
             let everythingData = try await newService.fetchEverything(for: self.searchTextEverythings, page: currentpage)
             self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
             self.everythingArticles = originalEverythingArticles
-            await sortArticles()
+            sortArticles()
         } catch {
             print("Error fetching everything: \(error.localizedDescription)")
         }
@@ -146,16 +149,14 @@ class HomeViewModel: ObservableObject {
             var topHeadlinesFetchedArticles: [Article]?
             var everythingFetchedArticles: [Article]?
             switch selectedTab {
-            case 0:
+            case .topHeadlines:
                 if let articlesData = try await newService.fetchTopHeadlines(page: currentpage) {
                     topHeadlinesFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
-            case 1:
+            case .everything:
                 if let articlesData = try await newService.fetchEverything(for: searchTextEverythings, page: currentpage) {
                     everythingFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
-            default:
-                break
             }
 
             if let articles = topHeadlinesFetchedArticles {

@@ -20,7 +20,7 @@ struct HomeView: View {
                                 Image(systemName: "newspaper")
                                 Text("Top headlines")
                             }
-                            .tag(0)
+                            .tag(HomeViewModel.HomeTab.topHeadlines)
 
                         NewsFeedView(viewModel: viewModel)
                             .padding(.top, .standard)
@@ -28,7 +28,7 @@ struct HomeView: View {
                                 Image(systemName: "newspaper.circle")
                                 Text("Everything")
                             }
-                            .tag(1)
+                            .tag(HomeViewModel.HomeTab.everything)
                     }
                 }
             }

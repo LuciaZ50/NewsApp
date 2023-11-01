@@ -9,14 +9,12 @@ struct NewsFeedView: View {
             Color.white.ignoresSafeArea()
             VStack {
                     switch viewModel.selectedTab {
-                    case 1:
+                    case .everything:
                         HStack {
                             SearchBar(text: $viewModel.searchTextEverythings)
                                 .padding(.horizontal)
                             Button {
-//                                Task {
-                                    viewModel.sortArticles()
-//                                }
+                                viewModel.sortArticles()
                             } label: {
                                 Text("Sort \(viewModel.sortingBy == .ascending ? "Ascending" : "Descending")")
                                     .foregroundColor(.black)
@@ -30,13 +28,10 @@ struct NewsFeedView: View {
                         }
 
                         articlesListView(articles: viewModel.everythingArticles, showDate: true)
-                    case 0:
+                    case .topHeadlines:
                         SearchBar(text: $viewModel.searchTextTopHeadlines)
                             .padding(.horizontal)
                         articlesListView(articles: viewModel.topHeadlinesArticles)
-
-                    default:
-                        EmptyView()
                     }
             }
 
