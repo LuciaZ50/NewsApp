@@ -12,7 +12,7 @@ something more secure but for the purposes of this assigment i put it in the Inf
 This screen shows a list of articles fetched from the given API. The data for both screens is fetched when the screen appears and is passed to the viewMopdel for those
 screens which is then passed to the view.
 I implemented pagination on this screen. Each page retruns 30 items. The user can use the search bar to filter the fetched articles by using a keyword/keywords.
-<img src="![WhatsApp Image 2023-11-01 at 11 48 24](https://github.com/LuciaZ50/NewsApp/assets/93731591/bf4c66de-99e6-4b69-a178-ace36b37dbca)" width="400" height="300">
+<img src="![WhatsApp Image 2023-11-01 at 11 48 22](https://github.com/LuciaZ50/NewsApp/assets/93731591/0414e876-ac7c-40bd-9fba-9523ecf22194)" width="400" height="300">
 
 **Everythings**
 
@@ -25,5 +25,6 @@ In addition to that, this view has a sort button which sorts the fetched data by
 a state var showDate to this view so i could show the dates of the articles when i use this component for the everythings(to show the sorting by the date).
 -NewsFeedView -> I chose not to make unique views for the everythings and topHeadlines. Instead i handle both cases inside this view by using a switch statement on the selectedTab.
 -HomeView -> Inside HomeView there is a tabView which consists of two NewsFeedView. Each of them has its own image and text as the navigation icon.
+
 
 
