@@ -26,8 +26,11 @@ In addition to that, this view has a sort button which sorts the fetched data by
 **Components**
 -NewsCard -> In this view i use an asyncImage to show the image if an url is given in the response from the api. I also show the title and the author of the article. I added
 a state var showDate to this view so i could show the dates of the articles when i use this component for the everythings(to show the sorting by the date).
+
 -NewsFeedView -> I chose not to make unique views for the everythings and topHeadlines. Instead i handle both cases inside this view by using a switch statement on the selectedTab.
+
 -HomeView -> Inside HomeView there is a tabView which consists of two NewsFeedView. Each of them has its own image and text as the navigation icon.
+
 -HomeViewModel -> I chose to inject one viewModel into the tabs since there is not much functionality that i need to work with, in a larger app i would have made two separate views with two separate viewModels
 
 
