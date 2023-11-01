@@ -7,7 +7,12 @@ class HomeViewModel: ObservableObject {
 
     @Published var originalTopHeadlinesArticles: [Article] = []
     @Published var originalEverythingArticles: [Article] = []
-    @Published var searchText = "dog" {
+    @Published var searchTextTopHeadlines = "" {
+        didSet {
+            updateFilteredArticles()
+        }
+    }
+    @Published var searchTextEverythings = "cat" {
         didSet {
             updateFilteredArticles()
         }
@@ -31,8 +36,10 @@ class HomeViewModel: ObservableObject {
         switch selectedTab {
         case 1:
             return "Everything"
-        default:
+        case 0:
             return "Top Headlines"
+        default:
+            return "Loading..."
         }
     }
 
@@ -65,27 +72,32 @@ class HomeViewModel: ObservableObject {
     }
 
     func sortArticles() async {
-        do {
-            let everythingData = try await newService.fetchAllEverythings()
-            await MainActor.run {
-                self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
-                self.everythingArticles = originalEverythingArticles.reversed()
+        await MainActor.run {
+            if sortingBy == .ascending {
+                self.everythingArticles = everythingArticles.sorted { (article1, article2) -> Bool in
+                    if let date1 = article1.publishedAt, let date2 = article2.publishedAt {
+                        return date1 > date2
+                    }
+                    return false
+                }
+                sortingBy = .descending
+            } else {
+                self.everythingArticles = everythingArticles.reversed()
+                sortingBy = .ascending
             }
-        } catch {
-            print("Error sorting articles: \(error.localizedDescription)")
         }
     }
 
     private func updateFilteredArticles() {
         switch selectedTab {
         case 1:
-            if searchText.isEmpty {
+            if searchTextTopHeadlines.isEmpty {
                 everythingArticles = originalEverythingArticles
             } else {
                 everythingArticles = originalEverythingArticles.filter { searchArticles($0) }
             }
         default:
-            if searchText.isEmpty {
+            if searchTextTopHeadlines.isEmpty {
                 topHeadlinesArticles = originalTopHeadlinesArticles
             } else {
                 topHeadlinesArticles = originalTopHeadlinesArticles.filter { searchArticles($0) }
@@ -94,7 +106,7 @@ class HomeViewModel: ObservableObject {
     }
 
     private func searchArticles(_ article: Article) -> Bool {
-        guard searchText.isEmpty || (article.title?.lowercased().contains(searchText.lowercased()) == true) else {
+        guard searchTextTopHeadlines.isEmpty || (article.title?.lowercased().contains(searchTextTopHeadlines.lowercased()) == true) else {
 
             return false
         }
@@ -106,7 +118,7 @@ class HomeViewModel: ObservableObject {
             self.state = .loading
         }
         do {
-            let topHeadlinesData = try await newService.fetchTopHeadlines(for: self.searchText, page: currentpage)
+            let topHeadlinesData = try await newService.fetchTopHeadlines(page: currentpage)
             await MainActor.run {
                 self.originalTopHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
                 self.topHeadlinesArticles = originalTopHeadlinesArticles
@@ -123,11 +135,12 @@ class HomeViewModel: ObservableObject {
 
     private func fetchEverything() async {
         do {
-            let everythingData = try await newService.fetchEverything(for: self.searchText, page: currentpage)
+            let everythingData = try await newService.fetchEverything(for: self.searchTextEverythings, page: currentpage)
             await MainActor.run {
                 self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
                 self.everythingArticles = originalEverythingArticles
             }
+            await sortArticles()
         } catch {
             print("Error fetching everything: \(error.localizedDescription)")
         }
@@ -147,11 +160,11 @@ class HomeViewModel: ObservableObject {
             var everythingFetchedArticles: [Article]?
             switch selectedTab {
             case 0:
-                if let articlesData = try await newService.fetchTopHeadlines(for: searchText, page: currentpage) {
+                if let articlesData = try await newService.fetchTopHeadlines(page: currentpage) {
                     topHeadlinesFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
             case 1:
-                if let articlesData = try await newService.fetchEverything(for: searchText, page: currentpage) {
+                if let articlesData = try await newService.fetchEverything(for: searchTextEverythings, page: currentpage) {
                     everythingFetchedArticles = articlesData.compactMap { Article(from: $0) }
                 }
             default:
@@ -165,7 +178,7 @@ class HomeViewModel: ObservableObject {
             if let articles = everythingFetchedArticles {
                 self.originalEverythingArticles.append(contentsOf: articles)
             }
-
+            updateFilteredArticles()
             isLoadingMore = false
         } catch {
             print("Error loading more articles: \(error.localizedDescription)")

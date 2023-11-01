@@ -15,12 +15,13 @@ class NetworkClient {
         }
 
         if (400...499).contains(httpResponse.statusCode) {
-            print("Client error: \(httpResponse.statusCode), \(httpResponse.description)")
+            if httpResponse.statusCode == 429 {
+                print("You have exceeded the request amount per day")
+            }
             throw HTTPError.clientError(statusCode: httpResponse.statusCode)
         }
 
         if (500...599).contains(httpResponse.statusCode) {
-            print("Server error: \(httpResponse.statusCode), \(httpResponse.description)")
             throw HTTPError.serverError(statusCode: httpResponse.statusCode)
         }
 

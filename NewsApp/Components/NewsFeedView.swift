@@ -8,69 +8,35 @@ struct NewsFeedView: View {
         ZStack {
             Color.white.ignoresSafeArea()
             VStack {
-                HStack {
-                    SearchBar(text: $viewModel.searchText)
-                        .padding(.horizontal)
-                    if viewModel.selectedTab == 1 {
-                        Button {
-                            Task {
-                                await viewModel.sortArticles()
-                            }
-                        } label: {
-                            Text("Sort")
-                                .foregroundColor(.black)
-                                .bold()
-                                .padding(.all, .standard)
-                                .frame(height: 40)
-                        }
-                        .background(Color.lighterGray())
-                        .cornerRadius(.cell)
-                        .padding(.trailing, .standard)
-
-                    }
-
-                }
-
                     switch viewModel.selectedTab {
                     case 1:
-                        List(viewModel.everythingArticles, id: \.id ) { article in
-                            NewsCard(article: article, showDate: true)
-                                .onAppear {
-                                    if article.id == viewModel.everythingArticles.last?.id {
-                                        Task {
-                                            await viewModel.loadMoreArticles()
-                                        }
-                                    }
+                        HStack {
+                            SearchBar(text: $viewModel.searchTextEverythings)
+                                .padding(.horizontal)
+                            Button {
+                                Task {
+                                    await viewModel.sortArticles()
                                 }
-                        }
-                        .listStyle(.plain)
-                        .refreshable {
-                            Task {
-                                if !viewModel.isRefreshing {
-                                    viewModel.isRefreshing = true
-                                    await viewModel.refreshData()
-                                }
+                            } label: {
+                                Text("Sort \(viewModel.sortingBy == .ascending ? "Ascending" : "Descending")")
+                                    .foregroundColor(.black)
+                                    .bold()
+                                    .padding(.all, .standard)
+                                    .frame(height: 40)
                             }
+                            .background(Color.lighterGray())
+                            .cornerRadius(.cell)
+                            .padding(.trailing, .standard)
                         }
 
+                        articlesListView(articles: viewModel.everythingArticles, showDate: true)
+                    case 0:
+                        SearchBar(text: $viewModel.searchTextTopHeadlines)
+                            .padding(.horizontal)
+                        articlesListView(articles: viewModel.topHeadlinesArticles)
+
                     default:
-                        List(viewModel.topHeadlinesArticles, id: \.id ) { article in
-                            NewsCard(article: article)
-                                .onAppear {
-                                    if article.id == viewModel.topHeadlinesArticles.last?.id {
-                                        Task {
-                                            await viewModel.loadMoreArticles()
-                                        }
-                                    }
-                                }
-                        }
-                        .listStyle(.plain)
-                        .refreshable {
-                            if !viewModel.isRefreshing {
-                                viewModel.isRefreshing = true
-                                await viewModel.refreshData()
-                            }
-                        }
+                        EmptyView()
                     }
             }
 
@@ -98,4 +64,28 @@ struct NewsFeedView: View {
         }
         .navigationBarTitle("News Feed")
     }
+
+    @ViewBuilder
+    func articlesListView(articles: [Article], showDate: Bool = false) -> some View {
+        List(articles, id: \.id) { article in
+            NewsCard(article: article, showDate: showDate)
+                .onAppear {
+                    if article.id == articles.last?.id {
+                        Task {
+                            await viewModel.loadMoreArticles()
+                        }
+                    }
+                }
+        }
+        .listStyle(.plain)
+        .refreshable {
+            Task {
+                if !viewModel.isRefreshing {
+                    viewModel.isRefreshing = true
+                    await viewModel.refreshData()
+                }
+            }
+        }
+    }
+
 }
