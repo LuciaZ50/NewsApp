@@ -16,15 +16,12 @@ I implemented pagination on this screen. Each page retruns 30 items. The user ca
 
 <img width="300" alt="Screenshot 2023-04-23 at 13 25 08" src="https://github.com/LuciaZ50/NewsApp/assets/93731591/e2a101a4-8b30-4756-b819-34122b8420db">
 
-
-![WhatsApp Image 2023-11-01 at 12 17 33](https://github.com/LuciaZ50/NewsApp/assets/93731591/e2a101a4-8b30-4756-b819-34122b8420db)
-
 **Everythings**
 
 This view shows a list of articles just like the previous screen. I also implemented pagination here and the user can filter the fetched data by a keyword/keywords.
 In addition to that, this view has a sort button which sorts the fetched data by the newest date or oldest.
 
-![WhatsApp Image 2023-11-01 at 11 48 22](https://github.com/LuciaZ50/NewsApp/assets/93731591/49bb3a40-74b3-468b-b5e3-aa59acb14de8)
+<img width="300" alt="Screenshot 2023-04-23 at 13 25 08" src="https://github.com/LuciaZ50/NewsApp/assets/93731591/49bb3a40-74b3-468b-b5e3-aa59acb14de8">
 
 **Components**
 -NewsCard -> In this view i use an asyncImage to show the image if an url is given in the response from the api. I also show the title and the author of the article. I added
