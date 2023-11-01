@@ -14,9 +14,9 @@ struct NewsFeedView: View {
                             SearchBar(text: $viewModel.searchTextEverythings)
                                 .padding(.horizontal)
                             Button {
-                                Task {
-                                    await viewModel.sortArticles()
-                                }
+//                                Task {
+                                    viewModel.sortArticles()
+//                                }
                             } label: {
                                 Text("Sort \(viewModel.sortingBy == .ascending ? "Ascending" : "Descending")")
                                     .foregroundColor(.black)

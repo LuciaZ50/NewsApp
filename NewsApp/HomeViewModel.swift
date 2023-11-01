@@ -1,6 +1,7 @@
 import Dependencies
 import Foundation
 
+@MainActor
 class HomeViewModel: ObservableObject {
 
     @Dependency(\.newsService) private var newService: NewsServiceProtocol
@@ -65,26 +66,22 @@ class HomeViewModel: ObservableObject {
         await fetchEverything()
         await fetchTopHeadlines()
 
-        await MainActor.run {
-            isRefreshing = false
-        }
+        isRefreshing = false
 
     }
 
-    func sortArticles() async {
-        await MainActor.run {
-            if sortingBy == .ascending {
-                self.everythingArticles = everythingArticles.sorted { (article1, article2) -> Bool in
-                    if let date1 = article1.publishedAt, let date2 = article2.publishedAt {
-                        return date1 > date2
-                    }
-                    return false
+    func sortArticles()  {
+        if sortingBy == .ascending {
+            self.everythingArticles = everythingArticles.sorted { (article1, article2) -> Bool in
+                if let date1 = article1.publishedAt, let date2 = article2.publishedAt {
+                    return date1 > date2
                 }
-                sortingBy = .descending
-            } else {
-                self.everythingArticles = everythingArticles.reversed()
-                sortingBy = .ascending
+                return false
             }
+            sortingBy = .descending
+        } else {
+            self.everythingArticles = everythingArticles.reversed()
+            sortingBy = .ascending
         }
     }
 
@@ -114,32 +111,24 @@ class HomeViewModel: ObservableObject {
     }
 
     private func fetchTopHeadlines() async {
-        await MainActor.run {
-            self.state = .loading
-        }
+        self.state = .loading
         do {
             let topHeadlinesData = try await newService.fetchTopHeadlines(page: currentpage)
-            await MainActor.run {
-                self.originalTopHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
-                self.topHeadlinesArticles = originalTopHeadlinesArticles
-                self.state = .finished
-            }
+            self.originalTopHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
+            self.topHeadlinesArticles = originalTopHeadlinesArticles
+            self.state = .finished
 
         } catch {
             print("Error fetching top headlines: \(error.localizedDescription)")
-            await MainActor.run {
-                self.state = .finished
-            }
+            self.state = .finished
         }
     }
 
     private func fetchEverything() async {
         do {
             let everythingData = try await newService.fetchEverything(for: self.searchTextEverythings, page: currentpage)
-            await MainActor.run {
-                self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
-                self.everythingArticles = originalEverythingArticles
-            }
+            self.originalEverythingArticles = everythingData?.compactMap { Article(from: $0) } ?? []
+            self.everythingArticles = originalEverythingArticles
             await sortArticles()
         } catch {
             print("Error fetching everything: \(error.localizedDescription)")
@@ -150,10 +139,8 @@ class HomeViewModel: ObservableObject {
     func loadMoreArticles() async {
         guard !isLoadingMore else { return }
 
-        await MainActor.run {
-            isLoadingMore = true
-            currentpage += 1
-        }
+        isLoadingMore = true
+        currentpage += 1
 
         do {
             var topHeadlinesFetchedArticles: [Article]?
@@ -182,9 +169,7 @@ class HomeViewModel: ObservableObject {
             isLoadingMore = false
         } catch {
             print("Error loading more articles: \(error.localizedDescription)")
-            await MainActor.run {
-                isLoadingMore = false
-            }
+            isLoadingMore = false
         }
     }
 

@@ -20,7 +20,7 @@ struct NewsCard: View {
                 }
             }
             VStack(alignment: .leading) {
-                Text(article.title ?? "title")
+                Text(article.title ?? "No title available")
                     .bold()
                     .lineLimit(nil)
                 Spacer()

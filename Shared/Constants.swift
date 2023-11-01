@@ -15,4 +15,3 @@ enum HeightsConstants: CGFloat {
         }
 
 }
-
