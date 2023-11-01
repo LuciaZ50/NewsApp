@@ -33,6 +33,8 @@ a state var showDate to this view so i could show the dates of the articles when
 
 -HomeViewModel -> I chose to inject one viewModel into the tabs since there is not much functionality that i need to work with, in a larger app i would have made two separate views with two separate viewModels
 
-
+Additional info:
+-The strings could have been extracted to a different file and accessed from there so all of them are in one place. I hardcoded them in the views to finish the assignment faster
+as I don't have more time to finish it.
 
 
