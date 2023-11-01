@@ -7,79 +7,78 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "CB462113-DDB8-4C01-A31E-C19E778A48F6"
+            uuid = "5EE5DD3F-0AEF-4C8A-B3F3-487221C3C16D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NewsApp/HomeViewModel.swift"
+            filePath = "NewsApp/Components/NewsFeedView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "18"
-            endingLineNumber = "18"
-            landmarkName = "searchTextEverythings"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EFA01733-B095-4284-852D-7F4BB68C48B0"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NewsApp/HomeViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "updateFilteredArticles()"
+            startingLineNumber = "68"
+            endingLineNumber = "68"
+            landmarkName = "articlesListView(articles:showDate:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "3E59F25A-A502-40A7-BCD6-B10671DA1F95"
+            uuid = "6BD0BC98-EEAF-4B95-8F8E-4AF86B583E00"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "NewsApp/HomeViewModel.swift"
+            filePath = "NewsApp/Components/NewsFeedView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
-            landmarkName = "updateFilteredArticles()"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "articlesListView(articles:showDate:)"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "3E59F25A-A502-40A7-BCD6-B10671DA1F95 - d177e580225812c5"
+                  uuid = "6BD0BC98-EEAF-4B95-8F8E-4AF86B583E00 - bdc5c80964f21e4e"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "NewsApp.HomeViewModel.updateFilteredArticles() -&gt; ()"
+                  symbolName = "(1) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in closure #1 (NewsApp.Article) -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in NewsApp.NewsFeedView.articlesListView(articles: Swift.Array&lt;NewsApp.Article&gt;, showDate: Swift.Bool) -&gt; some"
                   moduleName = "NewsApp"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/luciadecode/Documents/NewsApp/NewsApp/HomeViewModel.swift"
+                  urlString = "file:///Users/luciadecode/Documents/NewsApp/NewsApp/Components/NewsFeedView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "94"
-                  endingLineNumber = "94"
-                  offsetFromSymbolStart = "168">
+                  startingLineNumber = "70"
+                  endingLineNumber = "70"
+                  offsetFromSymbolStart = "64">
                </Location>
                <Location
-                  uuid = "3E59F25A-A502-40A7-BCD6-B10671DA1F95 - e434dae7e8d71e8e"
+                  uuid = "6BD0BC98-EEAF-4B95-8F8E-4AF86B583E00 - 85b17f8e6f0c6d54"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (NewsApp.Article) -&gt; Swift.Bool in NewsApp.HomeViewModel.updateFilteredArticles() -&gt; ()"
+                  symbolName = "(2) await resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in closure #1 (NewsApp.Article) -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in NewsApp.NewsFeedView.articlesListView(articles: Swift.Array&lt;NewsApp.Article&gt;, showDate: Swift.Bool) -&gt; some"
                   moduleName = "NewsApp"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/luciadecode/Documents/NewsApp/NewsApp/HomeViewModel.swift"
+                  urlString = "file:///Users/luciadecode/Documents/NewsApp/NewsApp/Components/NewsFeedView.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "94"
-                  endingLineNumber = "94"
-                  offsetFromSymbolStart = "48">
+                  startingLineNumber = "70"
+                  endingLineNumber = "70"
+                  offsetFromSymbolStart = "40">
+               </Location>
+               <Location
+                  uuid = "6BD0BC98-EEAF-4B95-8F8E-4AF86B583E00 - dd35989836dcc24c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(3) suspend resume partial function for closure #1 @Sendable () async -&gt; () in closure #1 () -&gt; () in closure #1 (NewsApp.Article) -&gt; &lt;&lt;opaque return type of SwiftUI.View.onAppear(perform: Swift.Optional&lt;() -&gt; ()&gt;) -&gt; some&gt;&gt;.0 in NewsApp.NewsFeedView.articlesListView(articles: Swift.Array&lt;NewsApp.Article&gt;, showDate: Swift.Bool) -&gt; some"
+                  moduleName = "NewsApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/luciadecode/Documents/NewsApp/NewsApp/Components/NewsFeedView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "70"
+                  endingLineNumber = "70"
+                  offsetFromSymbolStart = "28">
                </Location>
             </Locations>
          </BreakpointContent>

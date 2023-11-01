@@ -90,24 +90,29 @@ class HomeViewModel: ObservableObject {
 
     private func updateFilteredArticles() {
         switch selectedTab {
-        case .topHeadlines:
-            if searchTextTopHeadlines.isEmpty {
+        case .everything:
+            if searchTextEverythings.isEmpty {
                 everythingArticles = originalEverythingArticles
             } else {
-                everythingArticles = originalEverythingArticles.filter { searchArticles($0) }
+                everythingArticles = originalEverythingArticles.filter { searchArticles(
+                    $0,
+                    in: self.everythingArticles,
+                    with: self.searchTextEverythings) }
             }
-        case .everything:
+        case .topHeadlines:
             if searchTextTopHeadlines.isEmpty {
                 topHeadlinesArticles = originalTopHeadlinesArticles
             } else {
-                topHeadlinesArticles = originalTopHeadlinesArticles.filter { searchArticles($0) }
+                topHeadlinesArticles = originalTopHeadlinesArticles.filter { searchArticles(
+                    $0,
+                    in: self.topHeadlinesArticles,
+                    with: self.searchTextTopHeadlines) }
             }
         }
     }
 
-    private func searchArticles(_ article: Article) -> Bool {
-        guard searchTextTopHeadlines.isEmpty || (article.title?.lowercased().contains(searchTextTopHeadlines.lowercased()) == true) else {
-
+    private func searchArticles(_ article: Article, in articles: [Article], with queryText: String) -> Bool {
+        guard queryText.isEmpty || (article.title?.lowercased().contains(queryText.lowercased()) == true) else {
             return false
         }
         return true
@@ -120,7 +125,6 @@ class HomeViewModel: ObservableObject {
             self.originalTopHeadlinesArticles = topHeadlinesData?.compactMap { Article(from: $0) } ?? []
             self.topHeadlinesArticles = originalTopHeadlinesArticles
             self.state = .finished
-
         } catch {
             print("Error fetching top headlines: \(error.localizedDescription)")
             self.state = .finished
